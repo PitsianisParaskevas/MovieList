@@ -1,0 +1,84 @@
+package com.example.movielist;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.util.Log;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.material.animation.AnimatableView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.xml.transform.ErrorListener;
+
+public class MainActivity extends AppCompatActivity {
+
+    private final static String URL = "https://jsonplaceholder.typicode.com/posts";
+    private final static String URL_STRING = "";
+
+    private final static String URL_EQ = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_hour.geojson";
+
+    private RequestQueue queue;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        queue = Volley.newRequestQueue(this);
+        getStringObject(URL_STRING);
+
+        JsonArrayRequest arrayRequest = new JsonArrayRequest(Request.Method.GET, URL, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+
+                for(int i =0; i<response.length(); i++) {
+                    try {
+                        JSONObject movieObject = response.getJSONObject(i);
+                        Log.d("Items: ", movieObject.getString("id") + "/" + "Title" + movieObject.getString("title"));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+//                Log.d("Response: ", response.toString());
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Error", error.getMessage() );
+            }
+        });
+        queue.add(arrayRequest);
+    }
+
+    public void getStringObject(String url) {
+        StringRequest stringRequest = new StringRequest(Request.Method.get, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Log.d("My String: ", response.toString());
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        queue.add(stringRequest);
+    }
+
+}
