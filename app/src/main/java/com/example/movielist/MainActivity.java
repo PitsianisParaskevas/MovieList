@@ -36,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
+        Log.d("Message: ", "Hellow World");
+
         queue = Volley.newRequestQueue(this);
 //       getStringObject(URL_STRING);
         getJsonObject(URL_EQ);
@@ -71,6 +75,24 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 try {
                     Log.d("Object: ", response.getString("type").toString());
+
+                    JSONObject metadata = response.getJSONObject("metadata");
+                    Log.d("Metadata", metadata.toString());
+                    Log.d("MetadInfo", metadata.getString("title").toString());
+
+
+                    /// jsonArray
+                    JSONArray features = response.getJSONArray("features");
+
+                   for(int i = 0; i < features.length(); i++) {
+                       // Get objects
+                       JSONObject propertiesObj = features.getJSONObject(i).getJSONObject("properties");
+                       Log.d("Place: ", propertiesObj.getString("place"));
+
+                   }
+
+
+
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
